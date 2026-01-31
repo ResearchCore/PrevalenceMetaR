@@ -1,4 +1,5 @@
 # PrevalenceMetaR
-A repository for 'Conducting Meta-Analysis of Single Proportions Using R: A Step-by-Step Guide' article. It includes an R script and a CSV data file for meta-analysis using the meta package. Covers effect size pooling via GLMM, subgroup analysis, sensitivity analysis, meta-regression, and publication bias detection. Users can input their data or modify the script for custom headers.
+
+This repository accompanies the article *“Conducting Meta-Analysis of Single Proportions Using R.”* It contains a fully annotated R script and a sample CSV dataset for performing meta-analysis of prevalence using the `meta` package with the Generalized Linear Mixed Model (GLMM) approach. The workflow demonstrates pooled prevalence estimation, subgroup analysis, sensitivity analysis, meta-regression, and assessment of publication bias. Users may input their own data or adapt the script to accommodate custom variable names and headers.
 <br>
-Version used: R Version 4.4.3; RStudio version version 2024.12.1 Build 563; Meta package version 8.0-2
+**Software versions used:** R version 4.5.2; RStudio version 2026.01.0 (Build 392); `meta` package version 8.2-1
