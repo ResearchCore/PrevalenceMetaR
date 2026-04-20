@@ -1,0 +1,496 @@
+> # Import data from a CSV file
+> data <- read.csv(choose.files(), header = TRUE)
+> # View the imported dataset in tabular form
+> # This is useful for checking data structure and identifying errors
+> View(data)
+> prev.meta.glmm <- metaprop(
++   event   = positive,
++   n       = total,
++   data    = data,
++   studlab = study,
++   pscale  = 100,
++   common  = FALSE,
++   method  = "GLMM",
++   prediction = TRUE
++ )
+> # Display summary results
+> summary(prev.meta.glmm)
+                        events             95%-CI
+Author 01 et al., 2018  6.5248 [ 4.8162;  8.6076]
+Author 02 et al., 2018  8.0000 [ 3.5172; 15.1558]
+Author 03 et al., 2014 27.6398 [22.8254; 32.8708]
+Author 04 et al., 2013 14.2000 [12.0945; 16.5187]
+Author 05 et al., 2017 13.8138 [10.2941; 17.9926]
+Author 06 et al., 2014 12.0000 [ 8.9818; 15.5939]
+Author 07 et al., 2014 12.5749 [ 9.2152; 16.6154]
+Author 08 et al., 2016 20.2448 [17.8662; 22.7896]
+Author 09 et al., 2016 20.2448 [17.8662; 22.7896]
+Author 10 et al., 2013 12.9496 [ 7.8588; 19.6920]
+Author 11 et al., 2017 10.0000 [ 6.2159; 15.0213]
+Author 12 et al., 2018 11.7143 [ 8.5389; 15.5548]
+Author 13 et al., 2017 10.1250 [ 8.1222; 12.4270]
+Author 14 et al., 2016 17.3507 [15.1293; 19.7530]
+Author 15 et al., 2018 11.0585 [ 8.7226; 13.7645]
+Author 16 et al., 2010 15.7116 [12.7469; 19.0566]
+Author 17 et al., 2008 13.0000 [ 9.4101; 17.3405]
+Author 18 et al., 2017  9.2000 [ 7.4808; 11.1636]
+Author 19 et al., 2018 22.7766 [19.0249; 26.8816]
+Author 20 et al., 2015 18.7500 [15.9624; 21.7964]
+Author 21 et al., 2018  9.2000 [ 7.4808; 11.1636]
+Author 22 et al., 2016 10.3000 [ 8.4851; 12.3523]
+Author 23 et al., 2018 34.0000 [29.3662; 38.8726]
+Author 24 et al., 2017  1.2048 [ 0.1462;  4.2843]
+Author 25 et al., 2015  8.0000 [ 5.5362; 11.1061]
+Author 26 et al., 2013  9.6296 [ 7.6863; 11.8724]
+Author 27 et al., 2018  4.9689 [ 3.2093;  7.3034]
+Author 28 et al., 2011 10.1639 [ 7.0109; 14.1161]
+Author 29 et al., 2014  6.0000 [ 3.3967;  9.7031]
+Author 30 et al., 2019  9.5057 [ 6.2464; 13.7122]
+Author 31 et al., 2015  5.6000 [ 3.7530;  7.9921]
+Author 32 et al., 2016 15.0000 [10.3550; 20.7159]
+Author 33 et al., 2019  3.1000 [ 2.1158;  4.3715]
+Author 34 et al., 2016  3.1000 [ 2.1158;  4.3715]
+Author 35 et al., 2017 67.0000 [56.8827; 76.0801]
+
+Number of studies: k = 35
+Number of observations: o = 19411
+Number of events: e = 2448
+
+                      events            95%-CI
+Random effects model 11.5168 [9.0439; 14.5577]
+Prediction interval          [2.4788; 39.9936]
+
+Quantifying heterogeneity (with 95%-CIs):
+ tau^2 = 0.6270; tau = 0.7918; I^2 = 95.8% [94.9%; 96.5%]; H = 4.86 [4.41; 5.36]
+
+Test of heterogeneity:
+           Q d.f.  p-value
+ Wald 803.67   34 < 0.0001
+ LRT  931.39   34 < 0.0001
+
+Details of meta-analysis methods:
+- Random intercept logistic regression model
+- Maximum-likelihood estimator for tau^2
+- Calculation of I^2 based on Q
+- Prediction interval based on t-distribution (df = 34)
+- Logit transformation
+- Clopper-Pearson confidence interval for individual studies
+- Events per 100 observations
+> pdf("forest.prev.meta.glmm.pdf",
++     width = 10,
++     height = 15)
+> forest(prev.meta.glmm, sortvar = study, common  = FALSE)
+> grid.text(
++   "Pooled Prevalence of Disease X",
++   y  = unit(0.98, "npc"),
++   gp = gpar(fontsize = 16, fontface = "bold")
++ )
+> dev.off()
+null device 
+          1 
+> pdf("funnel.prev.meta.glmm.pdf",
++     width = 15,
++     height = 10)
+> par(mar = c(7, 7, 2.1, 2.1),
++     cex.lab = 2.5,
++     cex.axis = 2.5)
+> funnel(
++   prev.meta.glmm,
++   xlab = "Logit Transformed Proportion",
++   ylab = "Standard Error",
++   cex  = 2.5,
++   lwd  = 7
++ )
+> grid.text(
++   "Funnel Plot",
++   y  = unit(0.98, "npc"),
++   gp = gpar(fontsize = 16, fontface = "bold")
++ )
+> dev.off()
+null device 
+          1 
+> # Begg & Mazumdar’s rank correlation test
+> prev.meta.glmm.begs <- metabias(prev.meta.glmm, method.bias = "rank")
+> print(prev.meta.glmm.begs)
+Rank correlation test of funnel plot asymmetry
+
+Test result: z = -1.93, p-value = 0.0533
+Bias estimate: -136.0000 (SE = 70.3729)
+
+Reference: Begg & Mazumdar (1993), Biometrics
+> # Egger’s regression test
+> prev.meta.glmm.egger <- metabias(prev.meta.glmm, method.bias = "linreg")
+> print(prev.meta.glmm.egger)
+Linear regression test of funnel plot asymmetry
+
+Test result: t = -2.73, df = 33, p-value = 0.0102
+Bias estimate: -5.5267 (SE = 2.0275)
+
+Details:
+- multiplicative residual heterogeneity variance (tau^2 = 19.8776)
+- predictor: standard error
+- weight:    inverse variance
+- reference: Egger et al. (1997), BMJ
+> pdf("doi.prev.meta.glmm.pdf",
++     width = 15,
++     height = 10)
+> par(mar = c(7, 7, 2.1, 2.1),
++     cex.lab = 2,
++     cex.axis = 2)
+> doiplot(prev.meta.glmm, main = "Doi Plot for Prevalence of Disease X")
+> dev.off()
+null device 
+          1 
+> lfkindex.pre.meta.glmm <- lfkindex(prev.meta.glmm)
+> lfkindex.pre.meta.glmm
+        LFK index test
+
+LFK index: -1.82 (minor asymmetry)
+> site.prev.meta.glmm <- update(prev.meta.glmm, subgroup = setting)
+> summary(site.prev.meta.glmm)
+                        events             95%-CI   setting
+Author 01 et al., 2018  6.5248 [ 4.8162;  8.6076]  Hospital
+Author 02 et al., 2018  8.0000 [ 3.5172; 15.1558]  Hospital
+Author 03 et al., 2014 27.6398 [22.8254; 32.8708]  Hospital
+Author 04 et al., 2013 14.2000 [12.0945; 16.5187]  Hospital
+Author 05 et al., 2017 13.8138 [10.2941; 17.9926]  Hospital
+Author 06 et al., 2014 12.0000 [ 8.9818; 15.5939]  Hospital
+Author 07 et al., 2014 12.5749 [ 9.2152; 16.6154]  Hospital
+Author 08 et al., 2016 20.2448 [17.8662; 22.7896]  Hospital
+Author 09 et al., 2016 20.2448 [17.8662; 22.7896]  Hospital
+Author 10 et al., 2013 12.9496 [ 7.8588; 19.6920]  Hospital
+Author 11 et al., 2017 10.0000 [ 6.2159; 15.0213]  Hospital
+Author 12 et al., 2018 11.7143 [ 8.5389; 15.5548] Community
+Author 13 et al., 2017 10.1250 [ 8.1222; 12.4270] Community
+Author 14 et al., 2016 17.3507 [15.1293; 19.7530]  Hospital
+Author 15 et al., 2018 11.0585 [ 8.7226; 13.7645]  Hospital
+Author 16 et al., 2010 15.7116 [12.7469; 19.0566]  Hospital
+Author 17 et al., 2008 13.0000 [ 9.4101; 17.3405] Community
+Author 18 et al., 2017  9.2000 [ 7.4808; 11.1636]  Hospital
+Author 19 et al., 2018 22.7766 [19.0249; 26.8816]  Hospital
+Author 20 et al., 2015 18.7500 [15.9624; 21.7964]  Hospital
+Author 21 et al., 2018  9.2000 [ 7.4808; 11.1636] Community
+Author 22 et al., 2016 10.3000 [ 8.4851; 12.3523]  Hospital
+Author 23 et al., 2018 34.0000 [29.3662; 38.8726] Community
+Author 24 et al., 2017  1.2048 [ 0.1462;  4.2843] Community
+Author 25 et al., 2015  8.0000 [ 5.5362; 11.1061]  Hospital
+Author 26 et al., 2013  9.6296 [ 7.6863; 11.8724]  Hospital
+Author 27 et al., 2018  4.9689 [ 3.2093;  7.3034]  Hospital
+Author 28 et al., 2011 10.1639 [ 7.0109; 14.1161]  Hospital
+Author 29 et al., 2014  6.0000 [ 3.3967;  9.7031] Community
+Author 30 et al., 2019  9.5057 [ 6.2464; 13.7122]  Hospital
+Author 31 et al., 2015  5.6000 [ 3.7530;  7.9921]  Hospital
+Author 32 et al., 2016 15.0000 [10.3550; 20.7159]  Hospital
+Author 33 et al., 2019  3.1000 [ 2.1158;  4.3715] Community
+Author 34 et al., 2016  3.1000 [ 2.1158;  4.3715]  Hospital
+Author 35 et al., 2017 67.0000 [56.8827; 76.0801]  Hospital
+
+Number of studies: k = 35
+Number of observations: o = 19411
+Number of events: e = 2448
+
+                      events            95%-CI
+Random effects model 11.5168 [9.0439; 14.5577]
+Prediction interval          [2.4788; 39.9936]
+
+Quantifying heterogeneity (with 95%-CIs):
+ tau^2 = 0.6270; tau = 0.7918; I^2 = 95.8% [94.9%; 96.5%]; H = 4.86 [4.41; 5.36]
+
+Test of heterogeneity:
+           Q d.f.  p-value
+ Wald 803.67   34 < 0.0001
+ LRT  931.39   34 < 0.0001
+
+Results for subgroups (random effects model):
+                      k  events            95%-CI  tau^2    tau      Q   I^2
+setting = Hospital   27 12.5680 [9.7860; 16.0006] 0.5289 0.7272 545.80 95.2%
+setting = Community   8  8.3106 [4.4008; 15.1437] 0.8933 0.9452 250.15 97.2%
+
+Test for subgroup differences (random effects model):
+                  Q d.f. p-value
+Between groups 1.52    1  0.2180
+
+Details of meta-analysis methods:
+- Random intercept logistic regression model
+- Maximum-likelihood estimator for tau^2
+- Calculation of I^2 based on Q
+- Prediction interval based on t-distribution (df = 34)
+- Logit transformation
+- Clopper-Pearson confidence interval for individual studies
+- Events per 100 observations
+> pdf("forest.site.prev.meta.glm.pdf",
++     width = 10,
++     height = 15)
+> forest(
++   site.prev.meta.glmm,
++   sortvar = study,
++   common  = FALSE,
++   calcwidth.tests = TRUE
++ )
+> grid.text(
++   "Subgroup Analysis: Study Setting",
++   y  = unit(0.98, "npc"),
++   gp = gpar(fontsize = 16, fontface = "bold")
++ )
+> dev.off()
+null device 
+          1 
+> males.prev.meta.glmm <- update(prev.meta.glmm, subset = males == "y")
+> summary(males.prev.meta.glmm)
+                        events             95%-CI
+Author 01 et al., 2018  6.5248 [ 4.8162;  8.6076]
+Author 02 et al., 2018  8.0000 [ 3.5172; 15.1558]
+Author 03 et al., 2014 27.6398 [22.8254; 32.8708]
+Author 04 et al., 2013 14.2000 [12.0945; 16.5187]
+Author 05 et al., 2017 13.8138 [10.2941; 17.9926]
+Author 06 et al., 2014 12.0000 [ 8.9818; 15.5939]
+Author 07 et al., 2014 12.5749 [ 9.2152; 16.6154]
+Author 08 et al., 2016 20.2448 [17.8662; 22.7896]
+Author 09 et al., 2016 20.2448 [17.8662; 22.7896]
+Author 10 et al., 2013 12.9496 [ 7.8588; 19.6920]
+Author 11 et al., 2017 10.0000 [ 6.2159; 15.0213]
+Author 12 et al., 2018 11.7143 [ 8.5389; 15.5548]
+Author 13 et al., 2017 10.1250 [ 8.1222; 12.4270]
+Author 14 et al., 2016 17.3507 [15.1293; 19.7530]
+Author 15 et al., 2018 11.0585 [ 8.7226; 13.7645]
+Author 16 et al., 2010 15.7116 [12.7469; 19.0566]
+Author 17 et al., 2008 13.0000 [ 9.4101; 17.3405]
+Author 18 et al., 2017  9.2000 [ 7.4808; 11.1636]
+Author 19 et al., 2018 22.7766 [19.0249; 26.8816]
+Author 20 et al., 2015 18.7500 [15.9624; 21.7964]
+Author 21 et al., 2018  9.2000 [ 7.4808; 11.1636]
+Author 22 et al., 2016 10.3000 [ 8.4851; 12.3523]
+Author 23 et al., 2018 34.0000 [29.3662; 38.8726]
+Author 28 et al., 2011 10.1639 [ 7.0109; 14.1161]
+Author 29 et al., 2014  6.0000 [ 3.3967;  9.7031]
+Author 30 et al., 2019  9.5057 [ 6.2464; 13.7122]
+Author 31 et al., 2015  5.6000 [ 3.7530;  7.9921]
+Author 32 et al., 2016 15.0000 [10.3550; 20.7159]
+Author 33 et al., 2019  3.1000 [ 2.1158;  4.3715]
+Author 34 et al., 2016  3.1000 [ 2.1158;  4.3715]
+Author 35 et al., 2017 67.0000 [56.8827; 76.0801]
+
+Number of studies: k = 31
+Number of observations: o = 17552
+Number of events: e = 2312
+
+                      events            95%-CI
+Random effects model 12.6227 [9.9159; 15.9376]
+Prediction interval          [2.9300; 40.8774]
+
+Quantifying heterogeneity (with 95%-CIs):
+ tau^2 = 0.5685; tau = 0.7540; I^2 = 95.9% [95.0%; 96.7%]; H = 4.93 [4.45; 5.46]
+
+Test of heterogeneity:
+           Q d.f.  p-value
+ Wald 729.91   30 < 0.0001
+ LRT  847.59   30 < 0.0001
+
+Details of meta-analysis methods:
+- Random intercept logistic regression model
+- Maximum-likelihood estimator for tau^2
+- Calculation of I^2 based on Q
+- Prediction interval based on t-distribution (df = 30)
+- Logit transformation
+- Clopper-Pearson confidence interval for individual studies
+- Events per 100 observations
+> pdf("forest.males.prev.meta.glmm.pdf",
++     width = 10,
++     height = 15)
+> forest(males.prev.meta.glmm, sortvar = study, common  = FALSE)
+> grid.text(
++   "Pooled Prevalence in Males",
++   y  = unit(0.98, "npc"),
++   gp = gpar(fontsize = 16, fontface = "bold")
++ )
+> dev.off()
+null device 
+          1 
+> quality.prev.meta.glmm <- update(prev.meta.glmm, subset = quality >= 6)
+> summary(quality.prev.meta.glmm)
+                        events             95%-CI
+Author 04 et al., 2013 14.2000 [12.0945; 16.5187]
+Author 05 et al., 2017 13.8138 [10.2941; 17.9926]
+Author 07 et al., 2014 12.5749 [ 9.2152; 16.6154]
+Author 10 et al., 2013 12.9496 [ 7.8588; 19.6920]
+Author 11 et al., 2017 10.0000 [ 6.2159; 15.0213]
+Author 12 et al., 2018 11.7143 [ 8.5389; 15.5548]
+Author 13 et al., 2017 10.1250 [ 8.1222; 12.4270]
+Author 16 et al., 2010 15.7116 [12.7469; 19.0566]
+Author 18 et al., 2017  9.2000 [ 7.4808; 11.1636]
+Author 19 et al., 2018 22.7766 [19.0249; 26.8816]
+Author 24 et al., 2017  1.2048 [ 0.1462;  4.2843]
+Author 25 et al., 2015  8.0000 [ 5.5362; 11.1061]
+Author 27 et al., 2018  4.9689 [ 3.2093;  7.3034]
+Author 28 et al., 2011 10.1639 [ 7.0109; 14.1161]
+Author 31 et al., 2015  5.6000 [ 3.7530;  7.9921]
+Author 33 et al., 2019  3.1000 [ 2.1158;  4.3715]
+Author 34 et al., 2016  3.1000 [ 2.1158;  4.3715]
+
+Number of studies: k = 17
+Number of observations: o = 9012
+Number of events: e = 851
+
+                     events            95%-CI
+Random effects model 8.6489 [6.3994; 11.5912]
+Prediction interval         [2.2100; 28.3993]
+
+Quantifying heterogeneity (with 95%-CIs):
+ tau^2 = 0.4291; tau = 0.6550; I^2 = 93.5% [91.1%; 95.3%]; H = 3.93 [3.35; 4.62]
+
+Test of heterogeneity:
+           Q d.f.  p-value
+ Wald 247.46   16 < 0.0001
+ LRT  299.58   16 < 0.0001
+
+Details of meta-analysis methods:
+- Random intercept logistic regression model
+- Maximum-likelihood estimator for tau^2
+- Calculation of I^2 based on Q
+- Prediction interval based on t-distribution (df = 16)
+- Logit transformation
+- Clopper-Pearson confidence interval for individual studies
+- Events per 100 observations
+> pdf("forest.quality.prev.meta.glmm.pdf",
++     width = 10,
++     height = 15)
+> forest(quality.prev.meta.glmm,
++        sortvar = study,
++        common  = FALSE)
+> grid.text(
++   "Sensitivity Analysis: High-Quality Studies",
++   y  = unit(0.98, "npc"),
++   gp = gpar(fontsize = 16, fontface = "bold")
++ )
+> dev.off()
+null device 
+          1 
+> # Meta-regression with a single covariate (e.g., age)
+> agemr.prev.meta.glmm <- metareg(prev.meta.glmm, formula = age)
+> summary(agemr.prev.meta.glmm)
+
+Mixed-Effects Model (k = 35; tau^2 estimator: ML)
+
+   logLik   deviance        AIC        BIC       AICc   
+-101.9592     8.9190   209.9184   214.5845   210.6926   
+
+tau^2 (estimated amount of residual heterogeneity):     0.1547
+tau (square root of estimated tau^2 value):             0.3934
+I^2 (residual heterogeneity / unaccounted variability): 89.67%
+H^2 (unaccounted variability / sampling variability):   9.68
+
+Tests for Residual Heterogeneity:
+Wld(df = 33) = 209.6850, p-val < .0001
+LRT(df = 33) = 225.3949, p-val < .0001
+
+Test of Moderators (coefficient 2):
+QM(df = 1) = 81.6915, p-val < .0001
+
+Model Results:
+
+         estimate      se      zval    pval    ci.lb    ci.ub      
+intrcpt   -4.4281  0.2784  -15.9042  <.0001  -4.9738  -3.8824  *** 
+age        0.0607  0.0067    9.0383  <.0001   0.0475   0.0738  *** 
+
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+> # Meta-regression with multiple covariates (e.g., setting and age)
+> metareg.prev.meta.glmm <- metareg(prev.meta.glmm, formula = setting + age)
+> summary(metareg.prev.meta.glmm)
+
+Mixed-Effects Model (k = 35; tau^2 estimator: ML)
+
+   logLik   deviance        AIC        BIC       AICc   
+-101.7935     8.5875   211.5870   217.8084   212.9203   
+
+tau^2 (estimated amount of residual heterogeneity):     0.1542
+tau (square root of estimated tau^2 value):             0.3927
+I^2 (residual heterogeneity / unaccounted variability): 89.56%
+H^2 (unaccounted variability / sampling variability):   9.58
+
+Tests for Residual Heterogeneity:
+Wld(df = 32) = 209.0538, p-val < .0001
+LRT(df = 32) = 225.3664, p-val < .0001
+
+Test of Moderators (coefficients 2:3):
+QM(df = 2) = 82.2695, p-val < .0001
+
+Model Results:
+
+                 estimate      se      zval    pval    ci.lb    ci.ub      
+intrcpt           -4.4950  0.2957  -15.2030  <.0001  -5.0745  -3.9155  *** 
+settingHospital    0.1207  0.1784    0.6766  0.4987  -0.2289   0.4703      
+age                0.0600  0.0068    8.8508  <.0001   0.0467   0.0733  *** 
+
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+> # Baujat plot to identify studies contributing to heterogeneity
+> pdf("Baujat.prev.meta.glmm.pdf", width = 15, height = 10)
+> par(mar = c(7, 7, 2.1, 2.1), cex.lab = 2.5, cex.axis = 2.5)
+> baujat(prev.meta.glmm)
+> grid.text(
++   "Baujat Plot",
++   y  = unit(0.98, "npc"),
++   gp = gpar(fontsize = 16, fontface = "bold")
++ )
+> dev.off()
+null device 
+          1 
+> tnf.prev.meta.glmm <- trimfill(prev.meta.glmm)
+> tnf.prev.meta.glmm
+Number of studies: k = 47 (with 12 added studies)
+
+                      events             95%-CI
+Random effects model 16.5416 [12.9037; 20.9584]
+Prediction interval          [ 2.5489; 60.0308]
+
+Quantifying heterogeneity (with 95%-CIs):
+ tau^2 = 0.9902; tau = 0.9951; I^2 = 96.6% [96.1%; 97.1%]; H = 5.46 [5.05; 5.90]
+
+Test of heterogeneity:
+       Q d.f.  p-value
+ 1371.19   46 < 0.0001
+
+Details of meta-analysis methods:
+- Inverse variance method
+- Maximum-likelihood estimator for tau^2
+- Calculation of I^2 based on Q
+- Prediction interval based on t-distribution (df = 46)
+- Trim-and-fill method to adjust for funnel plot asymmetry (L-estimator)
+- Logit transformation
+- Events per 100 observations
+> pdf("tnf.prev.meta.glmm.pdf", width = 15, height = 10)
+> par(mar = c(7, 7, 2.1, 2.1), cex.lab = 2.5, cex.axis = 2.5)
+> funnel(
++   tnf.prev.meta.glmm,
++   xlab = "Logit Transformed Proportion",
++   ylab = "Standard Error",
++   cex  = 2.5,
++   lwd  = 7
++ )
+> grid.text(
++   "Trim-and-Fill Funnel Plot",
++   y  = unit(0.98, "npc"),
++   gp = gpar(fontsize = 16, fontface = "bold")
++ )
+> dev.off()
+null device 
+          1 
+> pdf("radial.prev.meta.glmm.pdf", width = 15, height = 10)
+> par(mar = c(7, 7, 2.1, 2.1), cex.lab = 2.5, cex.axis = 2.5)
+> radial(
++   prev.meta.glmm,
++   level = 0.95,
++   cex   = 2.5,
++   lwd   = 7
++ )
+> grid.text(
++   "Galbraith’s Radial Plot",
++   y  = unit(0.98, "npc"),
++   gp = gpar(fontsize = 16, fontface = "bold")
++ )
+> dev.off()
+null device 
+          1 
