@@ -1,6 +1,6 @@
 # PrevalenceMetaR
 
-This repository accompanies the article *“Conducting Meta-Analysis of Single Proportions Using R: A Practical Tutorial for Behavior Researchers.”* It provides a fully annotated R script and a sample CSV dataset to facilitate meta-analysis of prevalence using the `meta` package with the Generalized Linear Mixed Model (GLMM) approach.
+This repository accompanies the article *“Conducting Meta-Analysis of Single Proportions Using R: A Practical Tutorial for Behavioral Researchers.”* It provides a fully annotated R script and a sample CSV dataset to facilitate meta-analysis of prevalence using the `meta` package with the Generalized Linear Mixed Model (GLMM) approach.
 
 The workflow demonstrates:
 - Estimation of pooled prevalence using random-effects models  
